@@ -3,7 +3,7 @@ import * as web3 from '@alephium/web3'
 import { NodeProvider } from '@alephium/web3'
 
 export default class GetState extends Command {
-  static description = 'Convert contract id to address'
+  static description = 'Get contract state'
 
   static examples = [
     `$ oex alephium contract get-state 01010300010004144020a8ff18caf0ea2eb9c397d7a15c9271cde81f372fd3bc4aae41ff53514b382e3a170016000104`,
