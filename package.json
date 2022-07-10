@@ -1,6 +1,6 @@
 {
   "name": "alephium-cli",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "description": "Alephium CLI",
   "author": "h0ngcha0 @h0ngcha0",
   "bin": {
@@ -51,8 +51,8 @@
     ],
     "topicSeparator": " ",
     "topics": {
-      "hello": {
-        "description": "Say hello to the world and others"
+      "alephium": {
+        "description": "Alephium CLI Utilities"
       }
     }
   },
