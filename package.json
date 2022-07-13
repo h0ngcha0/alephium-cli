@@ -51,8 +51,11 @@
     ],
     "topicSeparator": " ",
     "topics": {
-      "alephium": {
-        "description": "Alephium CLI Utilities"
+      "contract": {
+        "description": "Contract utilities"
+      },
+      "wallets": {
+        "description": "Wallet utilities"
       }
     }
   },
