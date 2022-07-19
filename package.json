@@ -1,6 +1,7 @@
 {
   "name": "@h0ngcha0/alephium-cli",
-  "version": "0.0.2",
+  "version": "0.0.4",
+  "tag": "latest",
   "description": "Alephium CLI",
   "author": "h0ngcha0",
   "bin": {
