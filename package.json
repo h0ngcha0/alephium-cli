@@ -1,15 +1,18 @@
 {
-  "name": "alephium-cli",
+  "name": "@h0ngcha0/alephium-cli",
   "version": "0.0.2",
   "description": "Alephium CLI",
-  "author": "h0ngcha0 @h0ngcha0",
+  "author": "h0ngcha0",
   "bin": {
-    "alephium-cli": "./bin/run"
+    "alephium-cli": "bin/run"
   },
   "homepage": "https://github.com/h0ngcha0/alephium-cli",
   "license": "MIT",
   "main": "dist/index.js",
-  "repository": "h0ngcha0/alephium-cli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/h0ngcha0/alephium-cli.git"
+  },
   "files": [
     "/bin",
     "/dist",
@@ -76,9 +79,14 @@
   "engines": {
     "node": ">=12.0.0"
   },
-  "bugs": "https://github.com/h0ngcha0/alephium-cli/issues",
+  "bugs": {
+    "url": "https://github.com/h0ngcha0/alephium-cli/issues"
+  },
   "keywords": [
     "oclif"
   ],
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "directories": {
+    "test": "test"
+  }
 }
