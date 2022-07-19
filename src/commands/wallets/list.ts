@@ -1,5 +1,5 @@
 import { NodeProvider } from '@alephium/web3'
-import { AlephiumCommand } from '../../alephium-command'
+import { AlephiumCommand } from '../../common'
 
 export default class List extends AlephiumCommand {
   static description = 'List all the wallets'

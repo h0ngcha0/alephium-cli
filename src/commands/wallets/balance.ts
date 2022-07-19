@@ -1,5 +1,5 @@
 import { NodeProvider } from '@alephium/web3'
-import { AlephiumCommand } from '../../alephium-command'
+import { AlephiumCommand } from '../../common'
 
 export default class Balance extends AlephiumCommand {
   static description = 'Get the balance for a wallet'
