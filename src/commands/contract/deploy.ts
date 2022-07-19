@@ -1,7 +1,7 @@
 import { NodeProvider, Contract, Fields } from '@alephium/web3'
-import { AlephiumCommand, defaultSignerAddress, defaultSignerWallet } from '../../common'
+import { Command, defaultSignerAddress, defaultSignerWallet } from '../../common'
 
-export default class Deploy extends AlephiumCommand {
+export default class Deploy extends Command {
   static description = 'Deploy contract'
   static examples = [
     '$ alephium-cli deploy path-to-contract',
@@ -12,7 +12,7 @@ export default class Deploy extends AlephiumCommand {
     { name: 'initialFields', description: 'Initial fields for the contracts', required: false },
   ]
 
-  static flags = { nodeUrl: Deploy.nodeUrlFlag }
+  static flags = { ...Command.flags }
 
   async run(): Promise<void> {
     const { args, flags } = await this.parse(Deploy)

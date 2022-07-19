@@ -1,14 +1,14 @@
 import { NodeProvider, Contract } from '@alephium/web3'
-import { AlephiumCommand } from '../../common'
+import { Command } from '../../common'
 
-export default class Compile extends AlephiumCommand {
+export default class Compile extends Command {
   static description = 'Compile contract'
   static examples = [
     '$ alephium-cli compile path-to-contract',
   ]
 
   static args = [{ name: 'sourceFile', description: 'Source file', required: true }]
-  static flags = { nodeUrl: Compile.nodeUrlFlag }
+  static flags = { ...Command.flags }
 
   async run(): Promise<void> {
     const { args, flags } = await this.parse(Compile)

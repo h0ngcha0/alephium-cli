@@ -1,9 +1,9 @@
 import { NodeProvider } from '@alephium/web3'
-import { AlephiumCommand } from '../../common'
+import { Command } from '../../common'
 
-export default class List extends AlephiumCommand {
+export default class List extends Command {
   static description = 'List all the wallets'
-  static flags = { nodeUrl: List.nodeUrlFlag }
+  static flags = { ...Command.flags }
 
   async run(): Promise<void> {
     const { flags } = await this.parse(List)

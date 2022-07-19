@@ -1,10 +1,10 @@
 import { NodeProvider } from '@alephium/web3'
-import { AlephiumCommand } from '../../common'
+import { Command } from '../../common'
 
-export default class Balance extends AlephiumCommand {
+export default class Balance extends Command {
   static description = 'Get the balance for a wallet'
   static args = [{ name: 'walletName', description: 'Wallet Name', required: true }]
-  static flags = { nodeUrl: Balance.nodeUrlFlag }
+  static flags = { ...Command.flags }
 
   async run(): Promise<void> {
     const { args, flags } = await this.parse(Balance)

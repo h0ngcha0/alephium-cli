@@ -1,9 +1,9 @@
 import { NodeProvider, subscribeToEvents, SubscribeOptions } from '@alephium/web3'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
-import { AlephiumCommand } from '../../common'
+import { Command } from '../../common'
 import { Flags, CliUx } from '@oclif/core'
 
-export default class GetEvents extends AlephiumCommand {
+export default class GetEvents extends Command {
   static description = 'Get contract state'
   static examples = [
     '$ alephium-cli contract get-events 2Bhm8HSoxHRRAxY6RvoqWgMJZDBfpSZxyZr7MNkh6HGnC',
@@ -11,7 +11,7 @@ export default class GetEvents extends AlephiumCommand {
 
   static args = [{ name: 'address', description: 'Contract Address', required: true }]
   static flags = {
-    nodeUrl: GetEvents.nodeUrlFlag,
+    ...Command.flags,
     streaming: Flags.boolean({
       char: 's',
       description: 'Stream contract events',

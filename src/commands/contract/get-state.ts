@@ -1,14 +1,14 @@
 import { NodeProvider } from '@alephium/web3'
-import { AlephiumCommand } from '../../common'
+import { Command } from '../../common'
 
-export default class GetState extends AlephiumCommand {
+export default class GetState extends Command {
   static description = 'Get contract state'
   static examples = [
     '$ alephium-cli contract get-state 2Bhm8HSoxHRRAxY6RvoqWgMJZDBfpSZxyZr7MNkh6HGnC',
   ]
 
   static args = [{ name: 'address', description: 'Contract Address', required: true }]
-  static flags = { nodeUrl: GetState.nodeUrlFlag }
+  static flags = { ...Command.flags }
 
   async run(): Promise<void> {
     const { args, flags } = await this.parse(GetState)

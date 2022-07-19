@@ -1,2 +1,2 @@
-export * from './alephium-command'
+export * from './base'
 export * from './node-wallet'
