@@ -4,7 +4,7 @@ import { Command } from '../../common'
 export default class Compile extends Command {
   static description = 'Compile contract'
   static examples = [
-    '$ alephium-cli compile path-to-contract',
+    '$ alephium-cli contract compile path-to-contract',
   ]
 
   static args = [{ name: 'sourceFile', description: 'Source file', required: true }]
