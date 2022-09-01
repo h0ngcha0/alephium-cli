@@ -20,7 +20,7 @@
     "/oclif.manifest.json"
   ],
   "dependencies": {
-    "@alephium/web3": "0.2.0-rc.1",
+    "@alephium/web3": "0.2.0-rc.7",
     "@oclif/core": "^1.11.0",
     "@oclif/plugin-help": "^5",
     "@oclif/plugin-plugins": "^2.0.1",
