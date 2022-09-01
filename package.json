@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "@alephium/web3": "0.2.0-rc.1",
-    "@oclif/core": "^1.11.0",
+    "@oclif/core": "^1.16.0",
     "@oclif/plugin-help": "^5",
     "@oclif/plugin-plugins": "^2.0.1",
     "@oclif/plugin-not-found": "^2.3.1",
