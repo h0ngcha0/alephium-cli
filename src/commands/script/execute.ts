@@ -1,4 +1,5 @@
-import { NodeProvider, Script, Fields } from '@alephium/web3'
+import { Fields, Project } from '@alephium/web3'
+import { web3 } from '@alephium/web3'
 import { Command, defaultSignerAddress, defaultSignerWallet } from '../../common'
 
 export default class Execute extends Command {
@@ -16,13 +17,14 @@ export default class Execute extends Command {
 
   async run(): Promise<void> {
     const { args, flags } = await this.parse(Execute)
-    const nodeProvider = new NodeProvider(flags.nodeUrl)
+
+    web3.setCurrentNodeProvider(flags.nodeUrl)
 
     // TODO: Make signer & signerAddress configurable
-    const signer = await defaultSignerWallet(nodeProvider)
+    const signer = await defaultSignerWallet()
     const signerAddress = defaultSignerAddress
 
-    const script = await Script.fromSource(nodeProvider, args.sourceFile)
+    const script = Project.script(args.sourceFile)
     const initialFields = args.initialFields ? JSON.parse(args.initialFields) as Fields : undefined
     const execParams = await script.paramsForDeployment({
       signerAddress: signerAddress,

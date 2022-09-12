@@ -1,4 +1,5 @@
-import { NodeProvider, Contract } from '@alephium/web3'
+import { Project } from '@alephium/web3'
+import { web3 } from '@alephium/web3'
 import { Command } from '../../common'
 
 export default class Compile extends Command {
@@ -12,8 +13,8 @@ export default class Compile extends Command {
 
   async run(): Promise<void> {
     const { args, flags } = await this.parse(Compile)
-    const nodeProvider = new NodeProvider(flags.nodeUrl)
-    const compiled = Contract.fromSource(nodeProvider, args.sourceFile)
+    web3.setCurrentNodeProvider(flags.nodeUrl)
+    const compiled = Promise.resolve(Project.contract(args.sourceFile))
     await this.printApiResponse(compiled)
   }
 }

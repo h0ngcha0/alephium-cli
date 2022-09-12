@@ -1,7 +1,8 @@
-import { NodeProvider, subscribeToEvents, SubscribeOptions } from '@alephium/web3'
+import { subscribeToEvents, SubscribeOptions } from '@alephium/web3'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 import { Command } from '../../common'
 import { Flags, CliUx } from '@oclif/core'
+import { web3 } from '@alephium/web3'
 
 export default class GetEvents extends Command {
   static description = 'Get contract state'
@@ -22,11 +23,12 @@ export default class GetEvents extends Command {
 
   async run(): Promise<void> {
     const { args, flags } = await this.parse(GetEvents)
-    const nodeProvider = new NodeProvider(flags.nodeUrl)
+
+    web3.setCurrentNodeProvider(flags.nodeUrl)
+    const nodeProvider = web3.getCurrentNodeProvider()
 
     if (flags.streaming) {
       const subscriptOptions: SubscribeOptions<ContractEvent> = {
-        provider: nodeProvider,
         pollingInterval: 500,
         messageCallback: (event: ContractEvent): Promise<void> => {
           console.log(event)
