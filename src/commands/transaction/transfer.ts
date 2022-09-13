@@ -1,4 +1,4 @@
-import { Command, defaultSignerWallet } from '../../common'
+import { Command } from '../../common'
 import { web3 } from '@alephium/web3'
 import { Flags } from '@oclif/core'
 import { Token } from '@alephium/web3/dist/src/api/api-alephium'
@@ -28,7 +28,7 @@ export default class Transfer extends Command {
     const { args, flags } = await this.parse(Transfer)
 
     web3.setCurrentNodeProvider(flags.nodeUrl)
-    const signer = await defaultSignerWallet()
+    const signer = await this.getSigner()
 
     const isHex = (value: string): boolean => /[0-9A-Fa-f]{6}/g.test(value);
 

@@ -1,7 +1,7 @@
 import { Fields, Project } from '@alephium/web3'
 import { web3 } from '@alephium/web3'
 import { Flags } from '@oclif/core'
-import { Command, defaultSignerAddress, defaultSignerWallet } from '../../common'
+import { Command } from '../../common'
 
 export default class Deploy extends Command {
   static description = 'Deploy contract'
@@ -30,9 +30,8 @@ export default class Deploy extends Command {
     await Project.build({ errorOnWarnings: false })
     const contract = Project.contract(args.sourceFile)
 
-    // TODO: Make signer & signerAddress configurable
-    const signer = await defaultSignerWallet()
-    const signerAddress = defaultSignerAddress
+    const signer = await this.getSigner()
+    const signerAddress = await this.getSignerAddress()
 
     const initialFields = args.initialFields ? JSON.parse(args.initialFields) as Fields : undefined
     const execParams = await contract.paramsForDeployment({
