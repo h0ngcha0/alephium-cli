@@ -6,7 +6,7 @@ export default class Balance extends Command {
   static args = [{ name: 'walletName', description: 'Wallet Name', required: true }]
   static flags = { ...Command.flags }
 
-  async run(): Promise<void> {
+  async execute(): Promise<void> {
     const { args, flags } = await this.parse(Balance)
     const nodeProvider = new NodeProvider(flags.nodeUrl)
     await this.printApiResponse(nodeProvider.wallets.getWalletsWalletNameBalances(args.walletName))

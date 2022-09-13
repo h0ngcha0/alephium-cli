@@ -24,7 +24,7 @@ export default class Transfer extends Command {
     }),
   }
 
-  async run(): Promise<void> {
+  async execute(): Promise<void> {
     const { args, flags } = await this.parse(Transfer)
 
     web3.setCurrentNodeProvider(flags.nodeUrl)

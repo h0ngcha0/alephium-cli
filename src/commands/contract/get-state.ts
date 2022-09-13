@@ -10,7 +10,7 @@ export default class GetState extends Command {
   static args = [{ name: 'address', description: 'Contract Address', required: true }]
   static flags = { ...Command.flags }
 
-  async run(): Promise<void> {
+  async execute(): Promise<void> {
     const { args, flags } = await this.parse(GetState)
     const nodeProvider = new NodeProvider(flags.nodeUrl)
     await this.printApiResponse(nodeProvider.contracts.getContractsAddressState(args.address, { group: 0 }))

@@ -20,4 +20,14 @@ export abstract class Command extends BaseCommand {
         console.error(error)
       })
   }
+
+  async run(): Promise<void> {
+    try {
+      return await this.execute()
+    } catch (e) {
+      console.log("Error executing command", e)
+    }
+  }
+
+  abstract execute(): Promise<void>
 }

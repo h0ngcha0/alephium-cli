@@ -9,7 +9,7 @@ export default class IdFromAddress extends Command {
 
   static args = [{ name: 'address', description: 'ContractId', required: true }]
 
-  async run(): Promise<void> {
+  async execute(): Promise<void> {
     const { args } = await this.parse(IdFromAddress)
     this.log(web3.binToHex(web3.contractIdFromAddress(args.address)))
   }

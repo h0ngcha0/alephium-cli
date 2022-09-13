@@ -15,7 +15,7 @@ export default class Execute extends Command {
 
   static flags = { ...Command.flags }
 
-  async run(): Promise<void> {
+  async execute(): Promise<void> {
     const { args, flags } = await this.parse(Execute)
 
     web3.setCurrentNodeProvider(flags.nodeUrl)

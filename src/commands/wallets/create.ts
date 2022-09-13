@@ -33,17 +33,27 @@ export default class Create extends Command {
     })
   }
 
-  async run(): Promise<void> {
+  override async execute(): Promise<void> {
     const { flags } = await this.parse(Create)
     const nodeProvider = new NodeProvider(flags.nodeUrl)
 
-    const result = nodeProvider.wallets.postWallets({
-      "password": flags.password,
-      "walletName": flags.name,
-      "isMiner": flags.isMiner,
-      "mnemonicPassphrase": flags.mnemonicPassphrase,
-      "mnemonicSize": flags.mnemonicSize
-    })
-    await this.printApiResponse(result)
+    try {
+      await nodeProvider.wallets.getWalletsWalletName(flags.name)
+      console.info(`${flags.name} already exists`)
+    } catch (e) {
+      const detail = (e as { error: { detail: string } }).error.detail
+      if (detail.endsWith("not found")) {
+        const result = nodeProvider.wallets.postWallets({
+          "password": flags.password,
+          "walletName": flags.name,
+          "isMiner": flags.isMiner,
+          "mnemonicPassphrase": flags.mnemonicPassphrase,
+          "mnemonicSize": flags.mnemonicSize
+        })
+        await this.printApiResponse(result)
+      } else {
+        console.info(e)
+      }
+    }
   }
 }

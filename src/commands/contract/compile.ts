@@ -11,7 +11,7 @@ export default class Compile extends Command {
   static args = [{ name: 'sourceFile', description: 'Source file', required: true }]
   static flags = { ...Command.flags }
 
-  async run(): Promise<void> {
+  async execute(): Promise<void> {
     const { args, flags } = await this.parse(Compile)
     web3.setCurrentNodeProvider(flags.nodeUrl)
     const compiled = Promise.resolve(Project.contract(args.sourceFile))

@@ -21,7 +21,7 @@ export default class GetEvents extends Command {
     }),
   }
 
-  async run(): Promise<void> {
+  async execute(): Promise<void> {
     const { args, flags } = await this.parse(GetEvents)
 
     web3.setCurrentNodeProvider(flags.nodeUrl)
