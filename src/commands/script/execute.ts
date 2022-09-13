@@ -17,14 +17,14 @@ export default class Execute extends Command {
 
   async execute(): Promise<void> {
     const { args, flags } = await this.parse(Execute)
-
     web3.setCurrentNodeProvider(flags.nodeUrl)
+
+    await Project.build({ errorOnWarnings: false })
+    const script = Project.script(args.sourceFile)
 
     // TODO: Make signer & signerAddress configurable
     const signer = await defaultSignerWallet()
     const signerAddress = defaultSignerAddress
-
-    const script = Project.script(args.sourceFile)
     const initialFields = args.initialFields ? JSON.parse(args.initialFields) as Fields : undefined
     const execParams = await script.paramsForDeployment({
       signerAddress: signerAddress,
