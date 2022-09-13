@@ -13,7 +13,10 @@ export default class Compile extends Command {
 
   async execute(): Promise<void> {
     const { args, flags } = await this.parse(Compile)
+
     web3.setCurrentNodeProvider(flags.nodeUrl)
+    await Project.build({ errorOnWarnings: false })
+
     const compiled = Promise.resolve(Project.contract(args.sourceFile))
     await this.printApiResponse(compiled)
   }
