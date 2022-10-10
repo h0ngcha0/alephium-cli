@@ -12,7 +12,7 @@ $ npm install -g @h0ngcha0/alephium-cli
 $ alephium-cli COMMAND
 running command...
 $ alephium-cli (--version)
-@h0ngcha0/alephium-cli/0.1.2 linux-x64 node-v16.17.0
+@h0ngcha0/alephium-cli/0.1.3 linux-x64 node-v16.17.0
 $ alephium-cli --help [COMMAND]
 USAGE
   $ alephium-cli COMMAND

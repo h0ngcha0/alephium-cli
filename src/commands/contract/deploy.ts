@@ -39,12 +39,14 @@ export default class Deploy extends Command {
     const signerAddress = await this.getSignerAddress()
 
     const initialFields = args.initialFields ? JSON.parse(args.initialFields) as Fields : undefined
+
     const execParams = await contract.paramsForDeployment({
       signerAddress: signerAddress,
       initialFields: initialFields,
-      initialAttoAlphAmount: args.initialAttoAlph,
+      initialAttoAlphAmount: flags.initialAttoAlph,
       issueTokenAmount: flags.issueTokenAmount
     })
+
     const submitResult = signer.signDeployContractTx(execParams)
     await this.printApiResponse(submitResult)
   }
