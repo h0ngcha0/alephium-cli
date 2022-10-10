@@ -16,6 +16,11 @@ export default class Deploy extends Command {
 
   static flags = {
     ...Command.flags,
+    initialAttoAlph: Flags.string({
+      char: 'a',
+      description: 'Initial atto ALPH amount',
+      required: false
+    }),
     issueTokenAmount: Flags.integer({
       char: 't',
       description: 'Issue token amount',
@@ -37,6 +42,7 @@ export default class Deploy extends Command {
     const execParams = await contract.paramsForDeployment({
       signerAddress: signerAddress,
       initialFields: initialFields,
+      initialAttoAlphAmount: args.initialAttoAlph,
       issueTokenAmount: flags.issueTokenAmount
     })
     const submitResult = signer.signDeployContractTx(execParams)
