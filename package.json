@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "@alephium/sdk": "0.0.12",
-    "@alephium/web3": "0.2.0-rc.11",
+    "@alephium/web3": "0.2.0-rc.33",
     "@alephium/web3-wallet": "0.2.0-rc.11",
     "@oclif/core": "^1.16.1",
     "@oclif/plugin-autocomplete": "^1.3.0",
