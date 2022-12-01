@@ -36,7 +36,7 @@
     "@types/elliptic": "^6.4.14",
     "@types/fs-extra": "^9.0.13",
     "@types/mocha": "^9.1.1",
-    "@types/node": "^18.7.16",
+    "@types/node": "^18.11.10",
     "chai": "^4",
     "eslint": "^8.23.1",
     "eslint-config-oclif": "^4",
