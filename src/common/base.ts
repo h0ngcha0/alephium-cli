@@ -53,7 +53,9 @@ export abstract class Command extends BaseCommand {
 
       case 'PrivateKeyWallet': {
         const wallet = getWalletFromMnemonic(userConfig.mnemonic)
-        return new PrivateKeyWallet(wallet.privateKey)
+        return new PrivateKeyWallet({
+          privateKey: wallet.privateKey
+        })
       }
     }
   }

@@ -1,6 +1,6 @@
 {
   "name": "@h0ngcha0/alephium-cli",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "Alephium CLI",
   "author": "h0ngcha0",
   "bin": {
@@ -20,9 +20,9 @@
     "/oclif.manifest.json"
   ],
   "dependencies": {
-    "@alephium/sdk": "0.0.12",
-    "@alephium/web3": "0.2.0-rc.11",
-    "@alephium/web3-wallet": "0.2.0-rc.11",
+    "@alephium/web3": "^0.14.0",
+    "@alephium/web3-wallet": "^0.14.0",
+    "@alephium/sdk": "0.7.0",
     "@oclif/core": "^1.16.1",
     "@oclif/plugin-autocomplete": "^1.3.0",
     "@oclif/plugin-help": "^5",

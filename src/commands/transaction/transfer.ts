@@ -56,8 +56,8 @@ export default class Transfer extends Command {
       tokens = undefined
     }
 
-    const accounts = await signer.getAccounts()
-    const fromAddress = accounts[0]?.address
+    const account = await signer.getSelectedAccount()
+    const fromAddress = account.address
     if (fromAddress) {
       console.log(`Transfering from ${fromAddress}`)
       const params = {
@@ -71,7 +71,7 @@ export default class Transfer extends Command {
         ]
       }
 
-      const transferResult = signer.signTransferTx(params)
+      const transferResult = signer.signAndSubmitTransferTx(params)
       await this.printApiResponse(transferResult)
     } else {
       throw new Error("Can not find `from` address")
