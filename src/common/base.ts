@@ -1,8 +1,6 @@
-import { getWalletFromMnemonic } from '@alephium/sdk'
-import { SignerProvider } from '@alephium/web3'
+import { SignerProvider, } from '@alephium/web3'
 import { NodeWallet, PrivateKeyWallet } from '@alephium/web3-wallet'
 import { Command as BaseCommand, Flags } from '@oclif/core'
-import { flags } from '@oclif/core/lib/parser'
 import fs from 'fs-extra'
 import path from 'path'
 
@@ -52,10 +50,7 @@ export abstract class Command extends BaseCommand {
       }
 
       case 'PrivateKeyWallet': {
-        const wallet = getWalletFromMnemonic(userConfig.mnemonic)
-        return new PrivateKeyWallet({
-          privateKey: wallet.privateKey
-        })
+        return PrivateKeyWallet.FromMnemonic({ mnemonic: userConfig.mnemonic })
       }
     }
   }
