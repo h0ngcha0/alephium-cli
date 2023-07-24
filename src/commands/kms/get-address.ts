@@ -52,6 +52,6 @@ export default class GetPublicKey extends Command {
     };
     let signer = new GcpKmsSigner(kmsCredentials);
     const address = await signer.getAddress()
-    console.log("address", address)
+    console.log(address)
   }
 }
