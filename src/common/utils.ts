@@ -1,4 +1,4 @@
-import { node, NodeProvider } from "@alephium/web3"
+import { node, addressFromContractId, isBase58, isHexString, NodeProvider } from '@alephium/web3'
 
 // const requestInterval = networkId === 'devnet' ? 1000 : 10000
 export async function waitTxConfirmed(
@@ -17,4 +17,14 @@ export async function waitTxConfirmed(
 
 function isConfirmed(txStatus: node.TxStatus): txStatus is node.Confirmed {
   return txStatus.type === 'Confirmed'
+}
+
+export function tryGetContractAddress(idOrAddress: string): string {
+  if (idOrAddress.length === 64 && isHexString(idOrAddress)) {
+    return addressFromContractId(idOrAddress)
+  }
+  if (isBase58(idOrAddress)) {
+    return idOrAddress
+  }
+  throw new Error(`Invalid contract id or contract address: ${idOrAddress}`)
 }
