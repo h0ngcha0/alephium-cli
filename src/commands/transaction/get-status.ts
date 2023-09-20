@@ -1,7 +1,7 @@
 import { Args, Flags, ux } from '@oclif/core'
-import { Command } from '../../common'
+import { Command } from '../../common/command'
 import { TxStatus } from '@alephium/web3/dist/src/api/api-alephium'
-import { subscribeToTxStatus, SubscribeOptions, TxStatusSubscription, NodeProvider } from '@alephium/web3'
+import { web3, subscribeToTxStatus, SubscribeOptions, TxStatusSubscription, NodeProvider } from '@alephium/web3'
 
 export default class GetStatus extends Command {
   static description = 'Get transaction status'
@@ -28,11 +28,13 @@ export default class GetStatus extends Command {
 
   async execute(): Promise<void> {
     const { args, flags } = await this.parse(GetStatus)
-    const nodeProvider = new NodeProvider(flags.nodeUrl)
+    const nodeUrl = await this.getNodeUrl(flags)
+    const nodeProvider = new NodeProvider(nodeUrl)
 
     let subscription: TxStatusSubscription | undefined
 
     if (flags.streaming) {
+      web3.setCurrentNodeProvider(nodeProvider)
       const subscriptOptions: SubscribeOptions<TxStatus> = {
         pollingInterval: 500,
         messageCallback: (status: TxStatus): Promise<void> => {
@@ -51,7 +53,7 @@ export default class GetStatus extends Command {
         },
       }
 
-      ux.action.start('Fetching transaction status', 'polling', { stdout: true })
+      ux.action.start('Fetching transaction status', undefined, { stdout: true })
       subscription = subscribeToTxStatus(subscriptOptions, args.txId)
     } else {
       this.printApiResponse(

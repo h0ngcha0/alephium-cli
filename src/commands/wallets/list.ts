@@ -1,5 +1,5 @@
 import { NodeProvider } from '@alephium/web3'
-import { Command } from '../../common'
+import { Command } from '../../common/command'
 
 export default class List extends Command {
   static description = 'List all the wallets'
@@ -7,7 +7,8 @@ export default class List extends Command {
 
   async execute(): Promise<void> {
     const { flags } = await this.parse(List)
-    const nodeProvider = new NodeProvider(flags.nodeUrl)
+    const nodeUrl = await this.getNodeUrl(flags)
+    const nodeProvider = new NodeProvider(nodeUrl)
     await this.printApiResponse(nodeProvider.wallets.getWallets())
   }
 }

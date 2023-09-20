@@ -1,6 +1,6 @@
 import { NodeProvider } from '@alephium/web3'
 import { Flags } from '@oclif/core'
-import { Command } from '../../common'
+import { Command } from '../../common/command'
 
 export default class Restore extends Command {
   static description = 'Restore a wallets'
@@ -35,7 +35,8 @@ export default class Restore extends Command {
 
   override async execute(): Promise<void> {
     const { flags } = await this.parse(Restore)
-    const nodeProvider = new NodeProvider(flags.nodeUrl)
+    const nodeUrl = await this.getNodeUrl(flags)
+    const nodeProvider = new NodeProvider(nodeUrl)
 
     try {
       await nodeProvider.wallets.getWalletsWalletName(flags.name)

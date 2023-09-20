@@ -1,5 +1,5 @@
 import { NodeProvider } from '@alephium/web3'
-import { Command } from '../../common'
+import { Command } from '../../common/command'
 import { Args } from '@oclif/core'
 
 export default class Balance extends Command {
@@ -14,7 +14,8 @@ export default class Balance extends Command {
 
   async execute(): Promise<void> {
     const { args, flags } = await this.parse(Balance)
-    const nodeProvider = new NodeProvider(flags.nodeUrl)
+    const nodeUrl = await this.getNodeUrl(flags)
+    const nodeProvider = new NodeProvider(nodeUrl)
     await this.printApiResponse(nodeProvider.addresses.getAddressesAddressBalance(args.address))
   }
 }

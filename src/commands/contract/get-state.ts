@@ -1,7 +1,7 @@
 import { groupOfAddress, NodeProvider } from '@alephium/web3'
-import { Command } from '../../common'
+import { Command } from '../../common/command'
 import { Args } from '@oclif/core'
-import { tryGetContractAddress } from '../../common/utils'
+import { tryGetContractAddress } from '../../common'
 
 export default class GetState extends Command {
   static description = 'Get contract state'
@@ -20,7 +20,8 @@ export default class GetState extends Command {
 
   async execute(): Promise<void> {
     const { args, flags } = await this.parse(GetState)
-    const nodeProvider = new NodeProvider(flags.nodeUrl)
+    const nodeUrl = await this.getNodeUrl(flags)
+    const nodeProvider = new NodeProvider(nodeUrl)
     const address = tryGetContractAddress(args.idOrAddress)
     const group = groupOfAddress(address)
     await this.printApiResponse(nodeProvider.contracts.getContractsAddressState(address, { group }))

@@ -1,4 +1,4 @@
-import { SignerProvider, } from '@alephium/web3'
+import { NetworkId, SignerProvider, } from '@alephium/web3'
 import { NodeWallet, PrivateKeyWallet } from '@alephium/web3-wallet'
 import { Command as BaseCommand, Flags } from '@oclif/core'
 import fs from 'fs-extra'
@@ -17,14 +17,26 @@ type SignerProviderConfig =
   }
 
 export abstract class Command extends BaseCommand {
+  networkToNodeUrl = {
+    'devnet': 'http://127.0.0.1:22973',
+    'testnet': 'https://alephium-testnet.alephium.org',
+    'mainnet': 'https://wallet-v20.mainnet.alephium.org'
+  }
+
   static flags = {
-    nodeUrl: Flags.string({
+    network: Flags.string({
       char: 'n',
+      description: 'Network',
+      required: false,
+      env: "ALEPHIUM_NETWORK",
+      default: 'devnet',
+    }),
+    nodeUrl: Flags.string({
+      char: 'u',
       description: 'Node URL',
       required: false,
-      env: "ALEPHIUM_NODE_URL",
-      default: 'http://127.0.0.1:22973',
-    }),
+      env: "ALEPHIUM_NODE_URL"
+    })
   }
 
   async printApiResponse<T>(response: Promise<T>): Promise<void> {
@@ -70,6 +82,11 @@ export abstract class Command extends BaseCommand {
         "password": testPassword
       })
     }
+  }
+
+  async getNodeUrl(flags: any): Promise<string> {
+    const network: NetworkId = flags.network as NetworkId
+    return flags.nodeUrl || this.networkToNodeUrl[network]
   }
 
   async run(): Promise<void> {

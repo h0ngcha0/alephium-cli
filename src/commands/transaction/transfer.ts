@@ -1,8 +1,8 @@
 import { Args, Flags, ux } from '@oclif/core'
-import { Command } from '../../common'
+import { Command } from '../../common/command'
 import { Token } from '@alephium/web3/dist/src/api/api-alephium'
 import { DUST_AMOUNT, NodeProvider, web3 } from '@alephium/web3'
-import { isContractId, waitTxConfirmed } from '../../common/utils'
+import { isContractId, waitTxConfirmed } from '../../common'
 
 export default class Transfer extends Command {
   static description = 'Transfer ALPH from source to destination'
@@ -40,7 +40,8 @@ export default class Transfer extends Command {
 
   async execute(): Promise<void> {
     const { args, flags } = await this.parse(Transfer)
-    const nodeProvider = new NodeProvider(flags.nodeUrl)
+    const nodeUrl = await this.getNodeUrl(flags)
+    const nodeProvider = new NodeProvider(nodeUrl)
     web3.setCurrentNodeProvider(nodeProvider)
 
     const signer = await this.getSigner()
@@ -77,7 +78,7 @@ export default class Transfer extends Command {
 
     const fromAddress = account.address
     if (fromAddress) {
-      console.log(`Transfering from ${fromAddress} to ${args.to}`)
+      ux.action.start(`Transfering from ${fromAddress} to ${args.to}`, undefined, { stdout: true })
       const params = {
         signerAddress: fromAddress,
         destinations: [

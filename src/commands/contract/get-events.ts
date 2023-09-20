@@ -1,6 +1,6 @@
 import { subscribeToEvents, SubscribeOptions } from '@alephium/web3'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
-import { Command } from '../../common'
+import { Command } from '../../common/command'
 import { Args, Flags, ux } from '@oclif/core'
 import { web3 } from '@alephium/web3'
 
@@ -29,8 +29,8 @@ export default class GetEvents extends Command {
 
   async execute(): Promise<void> {
     const { args, flags } = await this.parse(GetEvents)
-
-    web3.setCurrentNodeProvider(flags.nodeUrl)
+    const nodeUrl = await this.getNodeUrl(flags)
+    web3.setCurrentNodeProvider(nodeUrl)
     const nodeProvider = web3.getCurrentNodeProvider()
 
     if (flags.streaming) {
