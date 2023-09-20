@@ -1,8 +1,8 @@
 import { Args, Flags, ux } from '@oclif/core'
 import { Command } from '../../common'
 import { Token } from '@alephium/web3/dist/src/api/api-alephium'
-import { NodeProvider, web3 } from '@alephium/web3'
-import { waitTxConfirmed } from '../../common/utils'
+import { DUST_AMOUNT, NodeProvider, web3 } from '@alephium/web3'
+import { isContractId, waitTxConfirmed } from '../../common/utils'
 
 export default class Transfer extends Command {
   static description = 'Transfer ALPH from source to destination'
@@ -14,15 +14,16 @@ export default class Transfer extends Command {
     to: Args.string({
       description: 'To Address',
       required: true
-    }),
-    alphAmount: Args.string({
-      description: 'Amount (atto)',
-      required: true
     })
   }
 
   static flags = {
     ...Command.flags,
+    alphAmount: Flags.string({
+      char: 'a',
+      description: 'Amount (atto)',
+      required: false
+    }),
     tokenAmounts: Flags.string({
       char: 't',
       description: 'Token amounts, in the format of `tokenId:tokenAmount',
@@ -39,13 +40,10 @@ export default class Transfer extends Command {
 
   async execute(): Promise<void> {
     const { args, flags } = await this.parse(Transfer)
-
     const nodeProvider = new NodeProvider(flags.nodeUrl)
     web3.setCurrentNodeProvider(nodeProvider)
 
     const signer = await this.getSigner()
-
-    const isHex = (value: string): boolean => /[0-9A-Fa-f]{6}/g.test(value);
 
     var tokens: Token[] | undefined = []
     if (flags.tokenAmounts) {
@@ -57,7 +55,7 @@ export default class Transfer extends Command {
 
         const id = splitResult[0]
         const amount = splitResult[1]
-        if (!(id.length === 64 && isHex(id))) {
+        if (!(isContractId(id))) {
           throw new Error(`The format of the token id ${id} is wrong`)
         }
 
@@ -72,25 +70,34 @@ export default class Transfer extends Command {
     }
 
     const account = await signer.getSelectedAccount()
+
+    if (!flags.alphAmount && !tokens) {
+      throw new Error("alphAmount and tokenAmounts can not be both unspecified")
+    }
+
     const fromAddress = account.address
     if (fromAddress) {
-      console.log(`Transfering from ${fromAddress}`)
+      console.log(`Transfering from ${fromAddress} to ${args.to}`)
       const params = {
         signerAddress: fromAddress,
         destinations: [
           {
             address: args.to,
-            attoAlphAmount: args.alphAmount,
+            attoAlphAmount: flags.alphAmount || DUST_AMOUNT,
             tokens
           }
         ]
       }
 
-      const transferResult = signer.signAndSubmitTransferTx(params)
-      ux.action.start('Transfering tokens', 'Waiting for tx confirmation', { stdout: true })
-      await waitTxConfirmed(nodeProvider, (await transferResult).txId, 2, 10000)
-      ux.action.stop('Done')
-      await this.printApiResponse(transferResult)
+      try {
+        const transferResult = await signer.signAndSubmitTransferTx(params)
+        ux.action.start('Waiting for tx confirmation', undefined, { stdout: true })
+        await waitTxConfirmed(nodeProvider, transferResult.txId)
+        ux.action.stop('Done')
+        this.log(JSON.stringify(transferResult, null, 2))
+      } catch (e) {
+        console.error(e)
+      }
     } else {
       throw new Error("Can not find `from` address")
     }

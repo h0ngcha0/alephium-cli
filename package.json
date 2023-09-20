@@ -22,13 +22,13 @@
   "dependencies": {
     "@alephium/web3": "^0.22.0",
     "@alephium/web3-wallet": "^0.22.0",
+    "@alephium/web3-test": "v0.22.0",
     "@oclif/core": "^2.15.0",
     "@oclif/plugin-autocomplete": "^2.3.8",
     "@oclif/plugin-help": "^5",
     "@oclif/plugin-not-found": "^2.4.1",
     "@oclif/plugin-plugins": "^3.7.1",
-    "axios": "^1.5.0",
-    "ethers-gcp-kms-signer": "^1.1.6"
+    "axios": "^1.5.0"
   },
   "devDependencies": {
     "@oclif/test": "^2.5.3",

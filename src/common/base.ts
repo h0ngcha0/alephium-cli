@@ -3,18 +3,17 @@ import { NodeWallet, PrivateKeyWallet } from '@alephium/web3-wallet'
 import { Command as BaseCommand, Flags } from '@oclif/core'
 import fs from 'fs-extra'
 import path from 'path'
+import { testPassword, testAddress, testWalletName } from '@alephium/web3-test'
 
 type SignerProviderConfig =
   | {
     type: 'NodeWallet',
     name: string,
-    password: string,
-    address: string
+    password: string
   }
   | {
     type: 'PrivateKeyWallet',
-    mnemonic: string,
-    address: string
+    privateKey: string
   }
 
 export abstract class Command extends BaseCommand {
@@ -40,7 +39,6 @@ export abstract class Command extends BaseCommand {
 
   async getSigner(): Promise<SignerProvider> {
     const userConfig = await this.getUserConfig()
-
     switch (userConfig.type) {
       case 'NodeWallet': {
         // NOTE: web3.setCurrentNodeProvider should be called at this point
@@ -50,14 +48,14 @@ export abstract class Command extends BaseCommand {
       }
 
       case 'PrivateKeyWallet': {
-        return PrivateKeyWallet.FromMnemonic({ mnemonic: userConfig.mnemonic })
+        return new PrivateKeyWallet({ privateKey: userConfig.privateKey })
       }
     }
   }
 
   async getSignerAddress(): Promise<string> {
-    const userConfig = await this.getUserConfig()
-    return userConfig.address
+    const signer = await this.getSigner()
+    return (await signer.getSelectedAccount()).address
   }
 
   async getUserConfig(): Promise<SignerProviderConfig> {
@@ -65,12 +63,11 @@ export abstract class Command extends BaseCommand {
     try {
       return await fs.readJSON(configFile) as SignerProviderConfig
     } catch (e) {
-      // default node wallet
       return Promise.resolve({
         "type": "NodeWallet",
-        "name": "alephium-web3-test-only-wallet",
-        "address": "1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH",
-        "password": "alph"
+        "name": testWalletName,
+        "address": testAddress,
+        "password": testPassword
       })
     }
   }

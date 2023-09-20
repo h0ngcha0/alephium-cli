@@ -4,15 +4,13 @@ import { node, addressFromContractId, isBase58, isHexString, NodeProvider } from
 export async function waitTxConfirmed(
   provider: NodeProvider,
   txId: string,
-  confirmations: number,
-  requestInterval: number
 ): Promise<node.Confirmed> {
   const status = await provider.transactions.getTransactionsStatus({ txId: txId })
-  if (isConfirmed(status) && status.chainConfirmations >= confirmations) {
+  if (isConfirmed(status) && status.chainConfirmations >= 1) {
     return status
   }
-  await new Promise((r) => setTimeout(r, requestInterval))
-  return waitTxConfirmed(provider, txId, confirmations, requestInterval)
+  await new Promise((r) => setTimeout(r, 5000))
+  return waitTxConfirmed(provider, txId)
 }
 
 function isConfirmed(txStatus: node.TxStatus): txStatus is node.Confirmed {
@@ -20,11 +18,15 @@ function isConfirmed(txStatus: node.TxStatus): txStatus is node.Confirmed {
 }
 
 export function tryGetContractAddress(idOrAddress: string): string {
-  if (idOrAddress.length === 64 && isHexString(idOrAddress)) {
+  if (isContractId(idOrAddress)) {
     return addressFromContractId(idOrAddress)
   }
   if (isBase58(idOrAddress)) {
     return idOrAddress
   }
   throw new Error(`Invalid contract id or contract address: ${idOrAddress}`)
+}
+
+export function isContractId(str: string) {
+  return str.length === 64 && isHexString(str)
 }
