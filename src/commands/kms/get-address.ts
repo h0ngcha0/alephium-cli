@@ -1,8 +1,6 @@
 import { GcpKmsSigner, GcpKmsSignerCredentials } from "ethers-gcp-kms-signer";
-import * as web3 from '@alephium/web3'
 import { Flags } from '@oclif/core'
 import { Command } from '@oclif/core'
-import { flags } from "@oclif/core/lib/parser";
 
 export default class GetPublicKey extends Command {
   static description = 'Convert contract id to address'

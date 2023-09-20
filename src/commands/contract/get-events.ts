@@ -1,7 +1,7 @@
 import { subscribeToEvents, SubscribeOptions } from '@alephium/web3'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 import { Command } from '../../common'
-import { Flags, CliUx } from '@oclif/core'
+import { Args, Flags, ux } from '@oclif/core'
 import { web3 } from '@alephium/web3'
 
 export default class GetEvents extends Command {
@@ -10,7 +10,13 @@ export default class GetEvents extends Command {
     '$ alephium-cli contract get-events 2Bhm8HSoxHRRAxY6RvoqWgMJZDBfpSZxyZr7MNkh6HGnC',
   ]
 
-  static args = [{ name: 'address', description: 'Contract Address', required: true }]
+  static args = {
+    address: Args.string({
+      description: 'Contract Address',
+      required: true
+    }),
+  }
+
   static flags = {
     ...Command.flags,
     streaming: Flags.boolean({
@@ -41,7 +47,7 @@ export default class GetEvents extends Command {
         },
       }
 
-      CliUx.ux.action.start('Fetching events', 'polling', { stdout: true })
+      ux.action.start('Fetching events', 'polling', { stdout: true })
       subscribeToEvents(subscriptOptions, args.address)
     } else {
       this.printApiResponse(

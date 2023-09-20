@@ -1,7 +1,8 @@
+import { Args, Flags, ux } from '@oclif/core'
 import { Command } from '../../common'
-import { web3 } from '@alephium/web3'
-import { Flags } from '@oclif/core'
 import { Token } from '@alephium/web3/dist/src/api/api-alephium'
+import { NodeProvider, web3 } from '@alephium/web3'
+import { waitTxConfirmed } from '../../common/utils'
 
 export default class Transfer extends Command {
   static description = 'Transfer ALPH from source to destination'
@@ -9,10 +10,16 @@ export default class Transfer extends Command {
     '$ alephium-cli transaction transfer $destination',
   ]
 
-  static args = [
-    { name: 'to', description: 'To address', required: true },
-    { name: 'alphAmount', description: 'Amount (atto)', required: true }
-  ]
+  static args = {
+    to: Args.string({
+      description: 'To Address',
+      required: true
+    }),
+    alphAmount: Args.string({
+      description: 'Amount (atto)',
+      required: true
+    })
+  }
 
   static flags = {
     ...Command.flags,
@@ -22,12 +29,20 @@ export default class Transfer extends Command {
       required: false,
       multiple: true
     }),
+    confirmations: Flags.integer({
+      char: 'c',
+      description: 'Number of confirmations to wait before command returns',
+      required: true,
+      default: 2
+    })
   }
 
   async execute(): Promise<void> {
     const { args, flags } = await this.parse(Transfer)
 
-    web3.setCurrentNodeProvider(flags.nodeUrl)
+    const nodeProvider = new NodeProvider(flags.nodeUrl)
+    web3.setCurrentNodeProvider(nodeProvider)
+
     const signer = await this.getSigner()
 
     const isHex = (value: string): boolean => /[0-9A-Fa-f]{6}/g.test(value);
@@ -72,6 +87,9 @@ export default class Transfer extends Command {
       }
 
       const transferResult = signer.signAndSubmitTransferTx(params)
+      ux.action.start('Transfering tokens', 'Waiting for tx confirmation', { stdout: true })
+      await waitTxConfirmed(nodeProvider, (await transferResult).txId, 2, 10000)
+      ux.action.stop('Done')
       await this.printApiResponse(transferResult)
     } else {
       throw new Error("Can not find `from` address")

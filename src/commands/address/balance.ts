@@ -1,9 +1,15 @@
 import { NodeProvider } from '@alephium/web3'
 import { Command } from '../../common'
+import { Args } from '@oclif/core'
 
 export default class Balance extends Command {
   static description = 'Get the balance for an address'
-  static args = [{ name: 'address', description: 'Address', required: true }]
+  static args = {
+    address: Args.string({
+      description: 'Address',
+      required: true
+    })
+  }
   static flags = { ...Command.flags }
 
   async execute(): Promise<void> {
