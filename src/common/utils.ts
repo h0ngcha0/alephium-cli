@@ -85,24 +85,26 @@ export function parseMethodCall(methodCall: string): ParsedMethodCall {
   if (matches) {
     const contractName = matches[1].trim();
     const methodName = matches[2].trim();
-    let args = undefined
-    try {
-      const methodArgs = matches[3].split(',').map(arg => arg.trim());
-      args = methodArgs.map((args) => {
-        const splitted = args.split(':')
-        if (splitted[1]) {
-          return { type: splitted[1], value: splitted[0] }
-        } else {
-          return { type: inferArgType(splitted[0]), value: splitted[0] }
-        }
-      })
-    } catch (e) {
-      throw new Error(`Method Args ${matches[3]} are not formatted correctly: ${e}`)
-    }
-
+    const args = parseMethodArgs(matches[3])
     return { contractName, methodName, args }
   } else {
     throw new Error(`${methodCall} is not formatted correctly`)
+  }
+}
+
+export function parseMethodArgs(methodArgs: string): Val[] {
+  try {
+    const args = methodArgs.split(',').map(arg => arg.trim());
+    return args.map((args) => {
+      const splitted = args.split(':')
+      if (splitted[1]) {
+        return { type: splitted[1], value: splitted[0] }
+      } else {
+        return { type: inferArgType(splitted[0]), value: splitted[0] }
+      }
+    })
+  } catch (e) {
+    throw new Error(`Method Args ${methodArgs} are not formatted correctly: ${e}`)
   }
 }
 

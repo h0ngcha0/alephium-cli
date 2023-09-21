@@ -50,7 +50,6 @@ export default class CallMethod extends Command {
       const address = contractInstance.address
       const group = contractInstance.groupIndex
       const methodIndex = contract.getMethodIndex(parsedMethodCall.methodName)
-
       await callMethod(nodeProvider, address, group, methodIndex, parsedMethodCall.args)
     } catch (e) {
       console.error(e)
