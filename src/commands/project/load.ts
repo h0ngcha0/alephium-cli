@@ -1,8 +1,8 @@
-import { web3, NodeProvider, Project } from '@alephium/web3'
-import { CallContractSucceeded } from '@alephium/web3/dist/src/api/api-alephium'
+import { web3, NodeProvider } from '@alephium/web3'
 import { Command } from '../../common/command'
-import { Args, Flags } from '@oclif/core'
+import { Flags } from '@oclif/core'
 import path from 'path'
+import { loadProject } from '../../common/project'
 
 export default class Load extends Command {
   static description = 'Load Project'
@@ -10,33 +10,24 @@ export default class Load extends Command {
     '$ alephium-cli project load <path-to-project-root>',
   ]
 
-  static args = {
-    projectRootDir: Args.string({
+  static flags = {
+    ...Command.flags,
+    projectRootDir: Flags.string({
+      char: 'p',
       description: 'Project Root Directory',
       required: false
     })
   }
 
-  static flags = {
-    ...Command.flags,
-    group: Flags.integer({
-      char: 'g',
-      description: 'Group',
-      required: true,
-      default: 0,
-    })
-  }
-
   async execute(): Promise<void> {
-    const { args, flags } = await this.parse(Load)
-    const projectRootDir = path.resolve(args.projectRootDir || '.')
-    const contractsRootDir = path.resolve(projectRootDir, 'contracts')
-    const artifactsRootDir = path.resolve(projectRootDir, 'artifacts')
+    const { flags } = await this.parse(Load)
+    const projectRootDir = path.resolve(flags.projectRootDir || '.')
     try {
       const nodeUrl = await this.getNodeUrl(flags)
       const nodeProvider = new NodeProvider(nodeUrl)
       web3.setCurrentNodeProvider(nodeProvider)
-      await Project.build(undefined, projectRootDir, contractsRootDir, artifactsRootDir)
+      await loadProject(projectRootDir)
+      console.log("Project loaded successfully")
     } catch (e) {
       console.log(e)
     }

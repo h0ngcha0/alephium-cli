@@ -3,6 +3,8 @@ import { CallContractSucceeded } from '@alephium/web3/dist/src/api/api-alephium'
 import { Command } from '../../common/command'
 import { Args, Flags } from '@oclif/core'
 import path from 'path'
+import { loadProject } from '../../common/project'
+import { inferArgType } from '../../common'
 
 export default class CallMethod extends Command {
   static description = 'Call Method'
@@ -35,13 +37,12 @@ export default class CallMethod extends Command {
   async execute(): Promise<void> {
     const { args, flags } = await this.parse(CallMethod)
     const projectRootDir = path.resolve(flags.projectRootDir || '.')
-    const contractsRootDir = path.resolve(projectRootDir, 'contracts')
     const artifactsRootDir = path.resolve(projectRootDir, 'artifacts')
     try {
       const nodeUrl = await this.getNodeUrl(flags)
       const nodeProvider = new NodeProvider(nodeUrl)
       web3.setCurrentNodeProvider(nodeProvider)
-      await Project.build(undefined, projectRootDir, contractsRootDir, artifactsRootDir)
+      await loadProject(projectRootDir)
 
       const contract = Project.contract('FriendTech')
       const methodCallRegex = /(\w*)\.(\w*)\(([^)]*)\)/;
@@ -54,7 +55,11 @@ export default class CallMethod extends Command {
           const rawMethodArgs = matches[3].split(',').map(arg => arg.trim());
           methodArgs = rawMethodArgs.map((args) => {
             const splitted = args.split(':')
-            return { type: splitted[1], value: splitted[0] }
+            if (splitted[1]) {
+              return { type: splitted[1], value: splitted[0] }
+            } else {
+              return { type: inferArgType(splitted[0]), value: splitted[0] }
+            }
           })
         } catch (e) {
           console.error(`Method Args ${matches[3]} are not formatted correctly: ${e}`)
@@ -74,7 +79,15 @@ export default class CallMethod extends Command {
         })
 
         if (result.type === 'CallContractSucceeded') {
-          console.log((result as CallContractSucceeded).returns[0].value)
+          const successfulReturns = (result as CallContractSucceeded).returns
+          if (successfulReturns.length === 0) {
+            console.log('No return value')
+          } else if (successfulReturns.length === 1) {
+            console.log(successfulReturns[0].value)
+          } else {
+            console.log((result as CallContractSucceeded).returns.map((r) => r.value))
+          }
+
         } else if (result.type === 'CallContractFailed') {
           console.error(result)
         }
