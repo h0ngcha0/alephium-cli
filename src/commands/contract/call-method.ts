@@ -1,9 +1,7 @@
-import { web3, NodeProvider, Project, groupOfAddress } from '@alephium/web3'
+import { web3, NodeProvider, groupOfAddress } from '@alephium/web3'
 import { Command } from '../../common/command'
-import { Args, Flags } from '@oclif/core'
-import path from 'path'
-import { loadProject } from '../../common/project'
-import { parseMethodCall, callMethod, parseMethodArgs } from '../../common'
+import { Args } from '@oclif/core'
+import { callMethod, parseMethodArgs } from '../../common'
 
 export default class CallMethod extends Command {
   static description = 'Call Method'

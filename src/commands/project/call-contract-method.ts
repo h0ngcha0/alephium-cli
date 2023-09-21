@@ -5,10 +5,10 @@ import path from 'path'
 import { loadProject } from '../../common/project'
 import { parseMethodCall, callMethod } from '../../common'
 
-export default class CallMethod extends Command {
-  static description = 'Call Method'
+export default class CallContractMethod extends Command {
+  static description = 'Call Contract Method'
   static examples = [
-    '$ alephium-cli project call-method "Foo.bar(a, b)"',
+    '$ alephium-cli project call-contract-method "Foo.bar(a, b)"',
   ]
 
   static args = {
@@ -34,7 +34,7 @@ export default class CallMethod extends Command {
   }
 
   async execute(): Promise<void> {
-    const { args, flags } = await this.parse(CallMethod)
+    const { args, flags } = await this.parse(CallContractMethod)
     const projectRootDir = path.resolve(flags.projectRootDir || '.')
     const artifactsRootDir = path.resolve(projectRootDir, 'artifacts')
     try {

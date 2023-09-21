@@ -4,7 +4,7 @@ import { Args, Flags } from '@oclif/core'
 import path from 'path'
 import { loadProject } from '../../common/project'
 
-export default class ShowMethods extends Command {
+export default class ShowContractMethods extends Command {
   static description = 'Show Contract Methods'
   static examples = [
     '$ alephium-cli project inspect-contract <contract-name>',
@@ -27,7 +27,7 @@ export default class ShowMethods extends Command {
   }
 
   async execute(): Promise<void> {
-    const { args, flags } = await this.parse(ShowMethods)
+    const { args, flags } = await this.parse(ShowContractMethods)
     const projectRootDir = path.resolve(flags.projectRootDir || '.')
     try {
       const nodeUrl = await this.getNodeUrl(flags)
