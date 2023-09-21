@@ -1,10 +1,9 @@
 import { web3, NodeProvider, Project } from '@alephium/web3'
-import { CallContractSucceeded } from '@alephium/web3/dist/src/api/api-alephium'
 import { Command } from '../../common/command'
 import { Args, Flags } from '@oclif/core'
 import path from 'path'
 import { loadProject } from '../../common/project'
-import { inferArgType } from '../../common'
+import { parseMethodCall, callMethod } from '../../common'
 
 export default class CallMethod extends Command {
   static description = 'Call Method'
@@ -44,56 +43,15 @@ export default class CallMethod extends Command {
       web3.setCurrentNodeProvider(nodeProvider)
       await loadProject(projectRootDir)
 
-      const contract = Project.contract('FriendTech')
-      const methodCallRegex = /(\w*)\.(\w*)\(([^)]*)\)/;
-      const matches = methodCallRegex.exec(args.methodCall)
-      if (matches) {
-        const contractName = matches[1].trim();
-        const methodName = matches[2].trim();
-        let methodArgs = undefined
-        try {
-          const rawMethodArgs = matches[3].split(',').map(arg => arg.trim());
-          methodArgs = rawMethodArgs.map((args) => {
-            const splitted = args.split(':')
-            if (splitted[1]) {
-              return { type: splitted[1], value: splitted[0] }
-            } else {
-              return { type: inferArgType(splitted[0]), value: splitted[0] }
-            }
-          })
-        } catch (e) {
-          console.error(`Method Args ${matches[3]} are not formatted correctly: ${e}`)
-        }
+      const parsedMethodCall = parseMethodCall(args.methodCall)
+      const contract = Project.contract(parsedMethodCall.contractName)
+      const deployments = await import(path.resolve(artifactsRootDir, `.deployments.${flags.network}.json`))
+      const contractInstance = deployments.contracts[parsedMethodCall.contractName].contractInstance
+      const address = contractInstance.address
+      const group = contractInstance.groupIndex
+      const methodIndex = contract.getMethodIndex(parsedMethodCall.methodName)
 
-        const deployments = await import(path.resolve(artifactsRootDir, `.deployments.${flags.network}.json`))
-
-        const address = deployments.contracts[contractName].contractInstance.address
-        const group = deployments.contracts[contractName].contractInstance.groupIndex
-        const methodIndex = contract.getMethodIndex(methodName)
-
-        const result = await nodeProvider.contracts.postContractsCallContract({
-          address,
-          group,
-          methodIndex,
-          args: methodArgs
-        })
-
-        if (result.type === 'CallContractSucceeded') {
-          const successfulReturns = (result as CallContractSucceeded).returns
-          if (successfulReturns.length === 0) {
-            console.log('No return value')
-          } else if (successfulReturns.length === 1) {
-            console.log(successfulReturns[0].value)
-          } else {
-            console.log((result as CallContractSucceeded).returns.map((r) => r.value))
-          }
-
-        } else if (result.type === 'CallContractFailed') {
-          console.error(result)
-        }
-      } else {
-        console.error("args.methodCall is not formatted correctly")
-      }
+      await callMethod(nodeProvider, address, group, methodIndex, parsedMethodCall.args)
     } catch (e) {
       console.error(e)
     }
