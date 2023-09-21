@@ -3,7 +3,7 @@ import { Command } from '../../common/command'
 import { Args, Flags } from '@oclif/core'
 import path from 'path'
 import { loadProject } from '../../common/project'
-import { parseMethodCall, callMethod } from '../../common'
+import { parseContractMethodCall, callMethod } from '../../common'
 
 export default class CallContractMethod extends Command {
   static description = 'Call Contract Method'
@@ -43,7 +43,7 @@ export default class CallContractMethod extends Command {
       web3.setCurrentNodeProvider(nodeProvider)
       await loadProject(projectRootDir)
 
-      const parsedMethodCall = parseMethodCall(args.methodCall)
+      const parsedMethodCall = parseContractMethodCall(args.methodCall)
       const contract = Project.contract(parsedMethodCall.contractName)
       const deployments = await import(path.resolve(artifactsRootDir, `.deployments.${flags.network}.json`))
       const contractInstance = deployments.contracts[parsedMethodCall.contractName].contractInstance

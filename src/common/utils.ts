@@ -1,5 +1,5 @@
 import { node, addressFromContractId, isBase58, isHexString, NodeProvider, groupOfAddress } from '@alephium/web3'
-import { Val } from '@alephium/web3/dist/src/api/api-alephium'
+import { Token, Val } from '@alephium/web3/dist/src/api/api-alephium'
 import { CallContractSucceeded } from '@alephium/web3/dist/src/api/api-alephium'
 
 // const requestInterval = networkId === 'devnet' ? 1000 : 10000
@@ -40,14 +40,6 @@ export function inferArgType(str: string) {
     return 'Bool'
   }
 
-  // Address
-  try {
-    groupOfAddress(str)
-    return 'Address'
-  } catch (e) {
-    // ignore
-  }
-
   // I256, U256
   try {
     const num = Number(str)
@@ -58,6 +50,14 @@ export function inferArgType(str: string) {
         return 'I256'
       }
     }
+  } catch (e) {
+    // ignore
+  }
+
+  // Address
+  try {
+    groupOfAddress(str)
+    return 'Address'
   } catch (e) {
     // ignore
   }
@@ -73,15 +73,15 @@ export function inferArgType(str: string) {
   return 'ByteVec'
 }
 
-const methodCallRegex = /(\w*)\.(\w*)\(([^)]*)\)/;
-export interface ParsedMethodCall {
+const contractMethodCallRegex = /(\w*)\.(\w*)\(([^)]*)\)/;
+export interface ParsedContractMethodCall {
   contractName: string,
   methodName: string,
   args: Val[]
 }
 
-export function parseMethodCall(methodCall: string): ParsedMethodCall {
-  const matches = methodCallRegex.exec(methodCall)
+export function parseContractMethodCall(methodCall: string): ParsedContractMethodCall {
+  const matches = contractMethodCallRegex.exec(methodCall)
   if (matches) {
     const contractName = matches[1].trim();
     const methodName = matches[2].trim();
@@ -89,6 +89,23 @@ export function parseMethodCall(methodCall: string): ParsedMethodCall {
     return { contractName, methodName, args }
   } else {
     throw new Error(`${methodCall} is not formatted correctly`)
+  }
+}
+
+const scriptMethodCallRegex = /(\w*)\(([^)]*)\)/;
+export interface ParsedScriptMethodCall {
+  scriptName: string,
+  args: Val[]
+}
+
+export function parseScriptMethodCall(scriptCall: string): ParsedScriptMethodCall {
+  const matches = scriptMethodCallRegex.exec(scriptCall)
+  if (matches) {
+    const scriptName = matches[1].trim();
+    const args = parseMethodArgs(matches[2])
+    return { scriptName, args }
+  } else {
+    throw new Error(`${scriptCall} is not formatted correctly`)
   }
 }
 
@@ -130,4 +147,32 @@ export async function callMethod(
     console.error(result)
   }
 
+}
+
+export function parseTokens(tokenAmounts: string[]): Token[] | undefined {
+  var tokens: Token[] | undefined = []
+  if (tokenAmounts) {
+    for (const tokenAmount of tokenAmounts) {
+      const splitResult: string[] = tokenAmount.split(":")
+      if (splitResult.length !== 2) {
+        throw new Error(`Token amounts should be in the format of "tokenId:tokenAmount", got: ${tokenAmount}`)
+      }
+
+      const id = splitResult[0]
+      const amount = splitResult[1]
+      if (!(isContractId(id))) {
+        throw new Error(`The format of the token id ${id} is wrong`)
+      }
+
+      if (Math.sign(Number(amount)) !== 1) {
+        throw new Error(`The format of the token amount ${amount} is wrong`)
+      }
+
+      tokens.push({ id, amount })
+    }
+  } else {
+    tokens = undefined
+  }
+
+  return tokens
 }

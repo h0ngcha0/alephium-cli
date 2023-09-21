@@ -1,8 +1,8 @@
 import { Args, Flags, ux } from '@oclif/core'
 import { Command } from '../../common/command'
-import { Token } from '@alephium/web3/dist/src/api/api-alephium'
 import { DUST_AMOUNT, NodeProvider, web3 } from '@alephium/web3'
-import { isContractId, waitTxConfirmed } from '../../common'
+import { waitTxConfirmed } from '../../common'
+import { parseTokens } from '../../common/utils'
 
 export default class Transfer extends Command {
   static description = 'Transfer ALPH from source to destination'
@@ -45,31 +45,7 @@ export default class Transfer extends Command {
     web3.setCurrentNodeProvider(nodeProvider)
 
     const signer = await this.getSigner()
-
-    var tokens: Token[] | undefined = []
-    if (flags.tokenAmounts) {
-      for (const tokenAmount of flags.tokenAmounts) {
-        const splitResult: string[] = tokenAmount.split(":")
-        if (splitResult.length !== 2) {
-          throw new Error(`Token amounts should be in the format of "tokenId:tokenAmount", got: ${tokenAmount}`)
-        }
-
-        const id = splitResult[0]
-        const amount = splitResult[1]
-        if (!(isContractId(id))) {
-          throw new Error(`The format of the token id ${id} is wrong`)
-        }
-
-        if (Math.sign(Number(amount)) !== 1) {
-          throw new Error(`The format of the token amount ${amount} is wrong`)
-        }
-
-        tokens.push({ id, amount })
-      }
-    } else {
-      tokens = undefined
-    }
-
+    const tokens = flags.tokenAmounts && parseTokens(flags.tokenAmounts)
     const account = await signer.getSelectedAccount()
 
     if (!flags.alphAmount && !tokens) {
